@@ -3,6 +3,7 @@
 ################################################################################
 
 /packages
-/.vs/DesafioCristiano/v15/Server/sqlite3
+/.vs
 /DesafioCristiano/bin
 /DesafioCristiano/obj
+.suo
