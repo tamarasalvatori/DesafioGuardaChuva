@@ -38,10 +38,10 @@ namespace DesafioCristiano
             fazLogin.ClicaLogin();
         }
 
-        public void CadastroPessoa(string cpf, string nome, string email, string nascimento)
+        public void CadastroPessoa(string cpf, string nome, string email, string nascimento, string generoEscolhido, string estCivil)
         {
             mostraFormulario.AbrindoFormulario();
-            preencheDadosPessoa.PreencheIdentificacaoPessoa(cpf, nome, email, nascimento);
+            preencheDadosPessoa.PreencheIdentificacaoPessoa(cpf, nome, email, nascimento, generoEscolhido, estCivil);
         }
 
         public void CadastroEmpresa(string cnpj, string nome, string email)

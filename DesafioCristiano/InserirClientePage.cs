@@ -27,9 +27,9 @@ namespace DesafioCristiano
         private string idEmail = "email";
         private string idNascimento = "birthday_date";
         private string idGenero = "gender";
-        private string generoFem = "#gender > option:nth-child(3)";
+        //private string generoFem = "#gender > option:nth-child(3)";
         private string idEstadoCivil = "marital_status";
-        private string estadoCasadx = "#marital_status > option:nth-child(2)";
+        //private string estadoCasadx = "#marital_status > option:nth-child(2)";
         private string idNext = "next";
 
         public InserirClientePage(IWebDriver driver)
@@ -37,7 +37,7 @@ namespace DesafioCristiano
             this.driver = driver;
         }
 
-        public void PreencheIdentificacaoPessoa(string cpf, string nome, string email, string nascimento)
+        public void PreencheIdentificacaoPessoa(string cpf, string nome, string email, string nascimento, string generoEscolhido, string estCivil)
         {
             selecionaTipo = driver.FindElement(By.Id(idTipoPessoa));
             selecionaTipo.Click();
@@ -56,12 +56,12 @@ namespace DesafioCristiano
 
             escolheGenero = driver.FindElement(By.Id(idGenero));
             escolheGenero.Click();
-            genero = driver.FindElement(By.CssSelector(generoFem));
+            genero = driver.FindElement(By.CssSelector(generoEscolhido));
             genero.Click();
 
             escolheEstadoCivil = driver.FindElement(By.Id(idEstadoCivil));
             escolheEstadoCivil.Click();
-            estadoCivil = driver.FindElement(By.CssSelector(estadoCasadx));
+            estadoCivil = driver.FindElement(By.CssSelector(estCivil));
             estadoCivil.Click();
 
             buttonNext = driver.FindElement(By.Id(idNext));
