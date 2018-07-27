@@ -58,9 +58,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CadastrandoClientesIncompletosWorkflow.cs" />
     <Compile Include="FormularioPage.cs" />
     <Compile Include="GeradorPage.cs" />
     <Compile Include="HomePage.cs" />
+    <Compile Include="InserirClienteIncompletoPage.cs" />
     <Compile Include="InserirClientePage.cs" />
     <Compile Include="InserirEnderecosPage.cs" />
     <Compile Include="LoginPage.cs" />

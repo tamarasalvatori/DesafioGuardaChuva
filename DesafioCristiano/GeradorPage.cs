@@ -16,6 +16,9 @@ namespace DesafioCristiano
             string iniciais = "";// contém os 9 primeiros números do cpf
             string num = ""; // receberá o valor contido em iniciais
             int numero;// número gerado randomicamente
+
+
+
             int primDig, segDig;// recebem o primeiro e o segundo digitos calculados
             int soma = 0, peso = 10; // utilizados nos calculos dos digitos verificadores
 

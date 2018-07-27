@@ -29,8 +29,6 @@ namespace DesafioCristiano
             this.preencheEnderecoPrincipal = new InserirEnderecosPage(driver);
             this.preencheEnderecoCobranca = new InserirEnderecosPage(driver);
             this.clicaSalvar = new SalvandoCadastroPage(driver);
-            //this.geraCpf = new Gerador(driver);
-            //this.geraCnpj = new Gerador(driver);
         }
 
         public void FazLogin(string name, string password)
@@ -42,14 +40,12 @@ namespace DesafioCristiano
 
         public void CadastroPessoa(string cpf, string nome, string email, string nascimento)
         {
-            //geraCpf.GerandoCpf();
             mostraFormulario.AbrindoFormulario();
             preencheDadosPessoa.PreencheIdentificacaoPessoa(cpf, nome, email, nascimento);
         }
 
         public void CadastroEmpresa(string cnpj, string nome, string email)
         {
-            //geraCnpj.GerandoCnpj();
             mostraFormulario.AbrindoFormulario();
             preencheDadosEmpresa.PreencheIdentificacaoEmpresa(cnpj, nome, email);
         }
