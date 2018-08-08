@@ -1,0 +1,2 @@
+Nome,Email,Nascimento,Genero,Estado Civil
+Tamara Salvatori,tamarasalvatori@gmail.com,17071990,#gender > option:nth-child(3),#marital_status > option:nth-child(2)
