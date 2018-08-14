@@ -9,4 +9,3 @@ C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\obj\Debug\TreinamentoAutomacao.Automation.dll
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\obj\Debug\TreinamentoAutomacao.Automation.pdb
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
-C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\obj\Debug\TreinamentoAutomacao.Automation.csprojAssemblyReference.cache

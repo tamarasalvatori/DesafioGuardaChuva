@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="ClientePf.cs" />
     <Compile Include="Pages\FormularioPage.cs" />
     <Compile Include="Pages\GeradorPage.cs" />
     <Compile Include="Pages\HomePage.cs" />

@@ -1,22 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
-using System.Drawing.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
 using TreinamentoAutomacao.Automation.Workflows;
 using TreinamentoAutomacao.Automation.Pages;
 using TreinamentoAutomacao.Automation.Components;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using System.Data.SqlClient;
+using TreinamentoAutomacao.Automation;
+using System.Linq;
+
 
 namespace TreinamentoAutomacao
 {
     [TestClass]
     public class CadastroClientesTest
     {
+        public static SqlConnection UmbrellasFactory { get; private set; }
+
         private IWebDriver driver;
         static IAlert alert;
 
@@ -55,23 +60,25 @@ namespace TreinamentoAutomacao
             umbrellaInitial.SaveAsFile(EvidencesDirectory + GetTimestamp() + ".jpeg", ScreenshotImageFormat.Jpeg);
         }
 
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV","dataSource/dados.csv","dados#csv",DataAccessMethod.Sequential)]
         [TestMethod]
         public void CadastrandoPessoas()
         {
-            //conteudo da linha e da coluna
-            string nome = Convert.ToString(TestContext.DataRow["Nome"]);
+            //
+            //BD - UmbrellasFactory
+
+            List<ClientePf> clientesPf = ObterClientesPf();
+            //
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-            
+
             CadastrandoClientesWorkflow cadastrando = new CadastrandoClientesWorkflow(driver);
 
             log.Write("Preenchendo campos de login");
             cadastrando.FazLogin("paul", "paul");
 
             log.Write("Preenchendo campos de dados pessoais");
-            cadastrando.CadastroPessoa((GeradorPage.GerandoCpf()), nome, "tamarasalvatori@gmail.com", "17071990", "#gender > option:nth-child(3)", "#marital_status > option:nth-child(2)");
-           
+            cadastrando.CadastroPessoa((GeradorPage.GerandoCpf()), clientesPf.First().Nome, "Tamara@gsd.com", "17071990", "#gender > option:nth-child(3)", "#marital_status > option:nth-child(2)");
+
             log.Write("Preenchendo campos de endereço");
             cadastrando.CadastroEnderecoPrinc("55555", "Maestro Mendanha", "84", "Porto Alegre", "5555555555", "7777777777");
             cadastrando.CadastroEnderecoCob("55555", "Maestro Mendanha", "84", "Porto Alegre", "5555555555", "7777777777");
@@ -87,6 +94,60 @@ namespace TreinamentoAutomacao
 
             bool cadastroRealizado = driver.PageSource.Contains("Client inserted with success");
             Assert.IsTrue(cadastroRealizado);
+        }
+
+        private  List<ClientePf> ObterClientesPf()
+        {
+            SqlConnection UmbrellasFactory = null;
+            var clientesPf = new List<ClientePf>();
+
+            try
+            {
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+
+                builder.DataSource = "localhost";
+                builder.IntegratedSecurity = true;
+                builder.ConnectTimeout = 30;
+                builder.Encrypt = false;
+                builder.TrustServerCertificate = false;
+                builder.ApplicationIntent = ApplicationIntent.ReadWrite;
+                builder.MultiSubnetFailover = false;
+                builder.InitialCatalog = "UmbrellasFactory";
+
+                Console.WriteLine(builder.ToString());
+
+                using (UmbrellasFactory = new SqlConnection(builder.ToString()))
+                {
+                    UmbrellasFactory.Open();
+                    SqlDataReader myReader = null;
+                    using (SqlCommand myCommand = new SqlCommand("select * from ClientesPF", UmbrellasFactory))
+                    {
+                        myReader = myCommand.ExecuteReader();
+                        while (myReader.Read())
+                        {
+                            var cliente = new ClientePf
+                            {
+                                Nome = myReader["Nome"].ToString(),
+                                Email = myReader["Email"].ToString(),
+                                Nascimento = int.Parse(myReader["Nascimento"].ToString())
+                            };
+
+                            clientesPf.Add(cliente);
+                        }
+                    }
+                }
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                UmbrellasFactory.Close();
+            }
+
+            return clientesPf;
         }
 
         private string GetTimestamp()
