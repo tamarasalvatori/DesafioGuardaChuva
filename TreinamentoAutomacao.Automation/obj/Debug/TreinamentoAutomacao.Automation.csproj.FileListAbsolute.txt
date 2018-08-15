@@ -9,3 +9,7 @@ C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\obj\Debug\TreinamentoAutomacao.Automation.dll
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\obj\Debug\TreinamentoAutomacao.Automation.pdb
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\obj\Debug\TreinamentoAutomacao.Automation.csprojAssemblyReference.cache
+C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Pessoa_Fisica.json
+C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Newtonsoft.Json.dll
+C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Newtonsoft.Json.xml

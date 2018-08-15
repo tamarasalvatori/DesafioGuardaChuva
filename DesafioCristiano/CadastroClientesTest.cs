@@ -13,7 +13,8 @@ using System.IO;
 using System.Data.SqlClient;
 using TreinamentoAutomacao.Automation;
 using System.Linq;
-
+using Example;
+using Newtonsoft.Json;
 
 namespace TreinamentoAutomacao
 {
@@ -55,7 +56,6 @@ namespace TreinamentoAutomacao
 
             log.Write("Screenshot da página inicial");
 
-            //Screenshot umbrellaInitial = driver.GetScreenshot();
             Screenshot umbrellaInitial = ((ITakesScreenshot)driver).GetScreenshot();
             umbrellaInitial.SaveAsFile(EvidencesDirectory + GetTimestamp() + ".jpeg", ScreenshotImageFormat.Jpeg);
         }
@@ -63,11 +63,10 @@ namespace TreinamentoAutomacao
         [TestMethod]
         public void CadastrandoPessoas()
         {
-            //
-            //BD - UmbrellasFactory
+            List<Account> accounts = DeserializeAccount();
 
-            List<ClientePf> clientesPf = ObterClientesPf();
-            //
+            List<Account> accountList = accounts.Where(x => x.Nome == "Tamara").ToList();
+            Account account = accountList.First();
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
@@ -77,11 +76,11 @@ namespace TreinamentoAutomacao
             cadastrando.FazLogin("paul", "paul");
 
             log.Write("Preenchendo campos de dados pessoais");
-            cadastrando.CadastroPessoa((GeradorPage.GerandoCpf()), clientesPf.First().Nome, "Tamara@gsd.com", "17071990", "#gender > option:nth-child(3)", "#marital_status > option:nth-child(2)");
+            cadastrando.CadastroPessoa((GeradorPage.GerandoCpf()), account.Nome, account.Email, account.Nascimento.ToString(), "#gender > option:nth-child(3)", "#marital_status > option:nth-child(2)");
 
             log.Write("Preenchendo campos de endereço");
-            cadastrando.CadastroEnderecoPrinc("55555", "Maestro Mendanha", "84", "Porto Alegre", "5555555555", "7777777777");
-            cadastrando.CadastroEnderecoCob("55555", "Maestro Mendanha", "84", "Porto Alegre", "5555555555", "7777777777");
+            cadastrando.CadastroEnderecoPrinc(account.Cep.ToString(), account.Endereco, account.Numero.ToString(), account.Cidade, account.Telefone, account.Celular);
+            cadastrando.CadastroEnderecoCob(account.Cep.ToString(), account.Endereco, account.Numero.ToString(), account.Cidade, account.Telefone, account.Celular);
 
             cadastrando.SalvaCadastro();
             Thread.Sleep(500);
@@ -96,60 +95,12 @@ namespace TreinamentoAutomacao
             Assert.IsTrue(cadastroRealizado);
         }
 
-        private  List<ClientePf> ObterClientesPf()
+        public List<Account> DeserializeAccount()
         {
-            SqlConnection UmbrellasFactory = null;
-            var clientesPf = new List<ClientePf>();
-
-            try
-            {
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-
-                builder.DataSource = "localhost";
-                builder.IntegratedSecurity = true;
-                builder.ConnectTimeout = 30;
-                builder.Encrypt = false;
-                builder.TrustServerCertificate = false;
-                builder.ApplicationIntent = ApplicationIntent.ReadWrite;
-                builder.MultiSubnetFailover = false;
-                builder.InitialCatalog = "UmbrellasFactory";
-
-                Console.WriteLine(builder.ToString());
-
-                using (UmbrellasFactory = new SqlConnection(builder.ToString()))
-                {
-                    UmbrellasFactory.Open();
-                    SqlDataReader myReader = null;
-                    using (SqlCommand myCommand = new SqlCommand("select * from ClientesPF", UmbrellasFactory))
-                    {
-                        myReader = myCommand.ExecuteReader();
-                        while (myReader.Read())
-                        {
-                            var cliente = new ClientePf
-                            {
-                                Nome = myReader["Nome"].ToString(),
-                                Email = myReader["Email"].ToString(),
-                                Nascimento = int.Parse(myReader["Nascimento"].ToString())
-                            };
-
-                            clientesPf.Add(cliente);
-                        }
-                    }
-                }
-            }
-
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                UmbrellasFactory.Close();
-            }
-
-            return clientesPf;
+            var json = File.ReadAllText("Pessoa_Fisica.json");
+            return JsonConvert.DeserializeObject<List<Account>>(json);
         }
-
+        
         private string GetTimestamp()
         {
             return DateTime.Now.ToString("yyyMMdd_hhmmss");
@@ -158,6 +109,11 @@ namespace TreinamentoAutomacao
         [TestMethod]
         public void CadastrandoEmpresas()
         {
+            List<AccountJuridica> accountsJuridica = DeserializeAccountJuridica();
+
+            List<AccountJuridica> accountListJuridica = accountsJuridica.Where(x => x.Nome == "Leonardo").ToList();
+            AccountJuridica accountJuridica = accountListJuridica.First();
+
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             CadastrandoClientesWorkflow cadastrando = new CadastrandoClientesWorkflow(driver);
 
@@ -165,11 +121,11 @@ namespace TreinamentoAutomacao
             cadastrando.FazLogin("paul", "paul");
 
             log.Write("Preenchendo campos de dados da empresa");
-            cadastrando.CadastroEmpresa((GeradorPage.GerandoCnpj()), "Tamara Salvatori", "tamarasalvatori@gmail.com");
+            cadastrando.CadastroEmpresa((GeradorPage.GerandoCnpj()), accountJuridica.Nome, accountJuridica.Email);
 
             log.Write("Preenchendo campos de endereço");
-            cadastrando.CadastroEnderecoPrinc("55555", "Maestro Mendanha", "84", "Porto Alegre", "5555555555", "7777777777");
-            cadastrando.CadastroEnderecoCob("55555", "Maestro Mendanha", "84", "Porto Alegre", "5555555555", "7777777777");
+            cadastrando.CadastroEnderecoPrinc(accountJuridica.Cep.ToString(), accountJuridica.Endereco, accountJuridica.Numero.ToString(), accountJuridica.Cidade, accountJuridica.Telefone, accountJuridica.Celular);
+            cadastrando.CadastroEnderecoCob(accountJuridica.Cep.ToString(), accountJuridica.Endereco, accountJuridica.Numero.ToString(), accountJuridica.Cidade, accountJuridica.Telefone, accountJuridica.Celular);
 
             cadastrando.SalvaCadastro();
             Thread.Sleep(500);
@@ -182,6 +138,12 @@ namespace TreinamentoAutomacao
 
             bool cadastroRealizado = driver.PageSource.Contains("Client inserted with success");
             Assert.IsTrue(cadastroRealizado);
+        }
+
+        public List<AccountJuridica> DeserializeAccountJuridica()
+        {
+            var json = File.ReadAllText("Pessoa_Juridica.json");
+            return JsonConvert.DeserializeObject<List<AccountJuridica>>(json);
         }
 
         [TestMethod]
@@ -201,25 +163,10 @@ namespace TreinamentoAutomacao
             umbrellaCompanyClientFailCpf.SaveAsFile(EvidencesDirectory + GetTimestamp() + ".jpeg", ScreenshotImageFormat.Jpeg);
 
             IAlert alert = driver.SwitchTo().Alert();
-            //alert.Text
-            //alert.Accept;
-
-            /*
-            Bitmap printscreen = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-
-            using (Graphics graphics = Graphics.FromImage(printscreen as Image))
-            {
-                graphics.CopyFromScreen(Point.Empty, Point.Empty, Screen.GetBounds(Point.Empty).Size);
-            }
-
-            byte[] img = (byte[])new ImageConverter().ConvertTo(printscreen, typeof(byte[]));
-            File.WriteAllBytes("PrintSemCpf.jpg", img);
-            */
-
+            
             VerificacaoDeErro verificaErro = new VerificacaoDeErro(driver);
             verificaErro.VerificaMensagemErro("Mandatory field(s) not informed: \r\n \r\nPromo-code \r\n");
             log.Save();
-
         }
 
         [TestMethod]
