@@ -11,3 +11,6 @@ C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Newtonsoft.Json.dll
 C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Newtonsoft.Json.xml
+C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Classes\ClientePf.cs
+C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Classes\ClientePf2.cs
+C:\Users\tamaras\source\repos\DesafioGuardaChuva\TreinamentoAutomacao.Automation\bin\Debug\Classes\ClientePj.cs

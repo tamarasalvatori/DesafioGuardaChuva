@@ -13,8 +13,7 @@ using System.IO;
 using System.Data.SqlClient;
 using TreinamentoAutomacao.Automation;
 using System.Linq;
-using Example;
-using Newtonsoft.Json;
+using System.Text;
 
 namespace TreinamentoAutomacao
 {
@@ -63,11 +62,8 @@ namespace TreinamentoAutomacao
         [TestMethod]
         public void CadastrandoPessoas()
         {
-            List<Account> accounts = DeserializeAccount();
-
-            List<Account> accountList = accounts.Where(x => x.Nome == "Tamara").ToList();
-            Account account = accountList.First();
-
+            List<ClientePf2> clientesPf2 = ObterClientesPf2();
+            
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
             CadastrandoClientesWorkflow cadastrando = new CadastrandoClientesWorkflow(driver);
@@ -76,11 +72,11 @@ namespace TreinamentoAutomacao
             cadastrando.FazLogin("paul", "paul");
 
             log.Write("Preenchendo campos de dados pessoais");
-            cadastrando.CadastroPessoa((GeradorPage.GerandoCpf()), account.Nome, account.Email, account.Nascimento.ToString(), "#gender > option:nth-child(3)", "#marital_status > option:nth-child(2)");
+            cadastrando.CadastroPessoa((GeradorPage.GerandoCpf()), clientesPf2.First().Nome, "Tamara@gsd.com", "17071990", "#gender > option:nth-child(3)", "#marital_status > option:nth-child(2)");
 
             log.Write("Preenchendo campos de endereço");
-            cadastrando.CadastroEnderecoPrinc(account.Cep.ToString(), account.Endereco, account.Numero.ToString(), account.Cidade, account.Telefone, account.Celular);
-            cadastrando.CadastroEnderecoCob(account.Cep.ToString(), account.Endereco, account.Numero.ToString(), account.Cidade, account.Telefone, account.Celular);
+            cadastrando.CadastroEnderecoPrinc("55555", "Maestro Mendanha", "84", "Porto Alegre", "5555555555", "7777777777");
+            cadastrando.CadastroEnderecoCob("55555", "Maestro Mendanha", "84", "Porto Alegre", "5555555555", "7777777777");
 
             cadastrando.SalvaCadastro();
             Thread.Sleep(500);
@@ -95,21 +91,75 @@ namespace TreinamentoAutomacao
             Assert.IsTrue(cadastroRealizado);
         }
 
-
-
-        public List<Account> DeserializeAccount()
+        private List<ClientePf2> ObterClientesPf2()
         {
-            //var diretorioCorrente = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-            var json = File.ReadAllText(@".\dataSource\Pessoa_Fisica.json");
-            return JsonConvert.DeserializeObject<List<Account>>(json);
+            SqlConnection UmbrellasFactory = null;
+            var clientesPf2 = new List<ClientePf2>();
+            try
+            {
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+                builder.DataSource = "localhost";
+                builder.IntegratedSecurity = true;
+                builder.ConnectTimeout = 30;
+                builder.Encrypt = false;
+                builder.TrustServerCertificate = false;
+                builder.ApplicationIntent = ApplicationIntent.ReadWrite;
+                builder.MultiSubnetFailover = false;
+                builder.InitialCatalog = "UmbrellasFactory";
+                Console.WriteLine(builder.ToString());
+                using (UmbrellasFactory = new SqlConnection(builder.ToString()))
+                {
+                    UmbrellasFactory.Open();
+                    SqlDataReader myReader = null;
+
+                    var sb = new StringBuilder();
+
+                    sb.AppendLine("select C.Nome [Nome Cliente], C.[Email], D. Id as [Id], D.Tipo as [Documento], D.Numero as [Numero]");
+                    sb.AppendLine("from ClientePf as C");
+                    sb.AppendLine("left join ClientePfDocumento as D on C.Id = D.ClientePF_Id");
+
+                    using (SqlCommand myCommand = new SqlCommand(sb.ToString(), UmbrellasFactory))
+                    {
+                        myReader = myCommand.ExecuteReader();
+                        while (myReader.Read())
+                        {
+                            var nomeAux = myReader["Nome Cliente"] ?? null;
+                            var idAux = myReader["Id"] ?? null;
+                            var emailAux = myReader["Email"] ?? null;
+                            var documentoAux = myReader["Numero"] ?? null;
+
+                            var cliente2 = new ClientePf2
+                            {
+                                Nome = nomeAux == DBNull.Value ? string.Empty : nomeAux.ToString(),
+                                Id = idAux == DBNull.Value ? Guid.Empty : Guid.Parse(idAux.ToString()),
+                                Email = emailAux == DBNull.Value ? string.Empty : emailAux.ToString(),
+                                Documento = documentoAux == DBNull.Value ? 0L : long.Parse(documentoAux.ToString())
+                            };
+
+                            clientesPf2.Add(cliente2);
+                        }
+                    }
+                }
+                //clientesPf2.First().Nome;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                UmbrellasFactory.Close();
+            }
+            return clientesPf2;
         }
-        
+
         private string GetTimestamp()
         {
             return DateTime.Now.ToString("yyyMMdd_hhmmss");
         }
 
-        [TestMethod]
+       /* [TestMethod]
         public void CadastrandoEmpresas()
         {
             List<AccountJuridica> accountsJuridica = DeserializeAccountJuridica();
@@ -143,12 +193,7 @@ namespace TreinamentoAutomacao
             bool cadastroRealizado = driver.PageSource.Contains("Client inserted with success");
             Assert.IsTrue(cadastroRealizado);
         }
-
-        public List<AccountJuridica> DeserializeAccountJuridica()
-        {
-            var json = File.ReadAllText(@".\dataSource\Pessoa_Juridica.json");
-            return JsonConvert.DeserializeObject<List<AccountJuridica>>(json);
-        }
+        */
 
         [TestMethod]
         public void CadastrandoPessoasCpfIncompleto()
@@ -326,7 +371,12 @@ namespace TreinamentoAutomacao
          public void Cleanup()
          {
              Thread.Sleep(1000);
-             driver.Close();
+
+            if (driver != null)
+            {
+                driver.Close();
+                driver.Dispose();
+            }
          }
 
     }

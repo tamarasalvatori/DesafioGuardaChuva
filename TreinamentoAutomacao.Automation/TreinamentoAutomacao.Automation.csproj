@@ -53,9 +53,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\ClientePf.cs" />
-    <Compile Include="Classes\ClientePf2.cs" />
-    <Compile Include="Classes\ClientePj.cs" />
+    <Compile Include="Classes\ClientePf.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Classes\ClientePf2.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Classes\ClientePj.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Pages\FormularioPage.cs" />
     <Compile Include="Pages\GeradorPage.cs" />
     <Compile Include="Pages\HomePage.cs" />
