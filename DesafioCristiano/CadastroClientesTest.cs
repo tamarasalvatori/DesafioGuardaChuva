@@ -95,9 +95,12 @@ namespace TreinamentoAutomacao
             Assert.IsTrue(cadastroRealizado);
         }
 
+
+
         public List<Account> DeserializeAccount()
         {
-            var json = File.ReadAllText("Pessoa_Fisica.json");
+            //var diretorioCorrente = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            var json = File.ReadAllText(@".\dataSource\Pessoa_Fisica.json");
             return JsonConvert.DeserializeObject<List<Account>>(json);
         }
         
@@ -111,6 +114,7 @@ namespace TreinamentoAutomacao
         {
             List<AccountJuridica> accountsJuridica = DeserializeAccountJuridica();
 
+            
             List<AccountJuridica> accountListJuridica = accountsJuridica.Where(x => x.Nome == "Leonardo").ToList();
             AccountJuridica accountJuridica = accountListJuridica.First();
 
@@ -142,7 +146,7 @@ namespace TreinamentoAutomacao
 
         public List<AccountJuridica> DeserializeAccountJuridica()
         {
-            var json = File.ReadAllText("Pessoa_Juridica.json");
+            var json = File.ReadAllText(@".\dataSource\Pessoa_Juridica.json");
             return JsonConvert.DeserializeObject<List<AccountJuridica>>(json);
         }
 
